@@ -63,7 +63,75 @@ public class FCFS {
     }
 }
 
+PRIORITY PREEMPTIVE
 
+
+import java.util.Scanner;
+public class prioritypre {
+static class Process {
+int id, burst, priority, arrival, waitingTime, turnaroundTime;
+int remainingBurst;
+public Process(int id, int burst, int priority, int arrival) {
+this.id = id;
+this.burst = burst;
+this.priority = priority;
+this.arrival = arrival;
+this.remainingBurst = burst;
+}
+}
+public static void main(String[] args) {
+Scanner sc = new Scanner(System.in);
+System.out.print("Enter number of processes: ");
+int n = sc.nextInt();
+Process[] processes = new Process[n];
+for (int i = 0; i < n; i++) {
+System.out.print("Enter arrival time, burst time, and priority for process " + (i + 1) + ": ");
+int at = sc.nextInt();
+int bt = sc.nextInt();
+int priority = sc.nextInt();
+processes[i] = new Process(i + 1, bt, priority, at);
+}
+int completed = 0, time = 0;
+String ganttChart = "";
+while (completed < n) {
+int idx = -1;
+int highestPriority = Integer.MAX_VALUE;
+for (int i = 0; i < n; i++) {
+if (processes[i].arrival <= time && processes[i].remainingBurst > 0 && processes[i].priority <
+highestPriority) {
+highestPriority = processes[i].priority;
+idx = i;
+}
+}
+if (idx != -1) {
+processes[idx].remainingBurst--;
+ganttChart += "P" + processes[idx].id + " ";
+if (processes[idx].remainingBurst == 0) {
+completed++;
+processes[idx].turnaroundTime = time + 1 - processes[idx].arrival;
+processes[idx].waitingTime = processes[idx].turnaroundTime - processes[idx].burst;
+}
+} else {
+ganttChart += "idle ";
+}
+time++;
+}
+// Print Gantt Chart
+System.out.println("Gantt Chart: " + ganttChart);
+// Calculate and print average waiting time and turnaround time
+int totalWT = 0, totalTAT = 0;
+System.out.println("Process\tArrival\tBurst\tPriority\tWaiting\tTurnaround");
+for (Process p : processes) {
+totalWT += p.waitingTime;
+totalTAT += p.turnaroundTime;
+System.out.println("P" + p.id + "\t" + p.arrival + "\t" + p.burst + "\t" + p.priority + "\t\t" +
+p.waitingTime + "\t" + p.turnaroundTime);
+}
+System.out.println("Average Waiting Time: " + (totalWT / (float) n));
+System.out.println("Average Turnaround Time: " + (totalTAT / (float) n));
+sc.close();
+}
+}
 
 
 
@@ -202,7 +270,67 @@ public class RoundRobin {
 }
 
 
+SJF NON PREEMPTIVE
 
+import java.util.Scanner;
+
+class SJFNProcess {
+    int pid, burstTime, arrivalTime, waitingTime, turnaroundTime;
+
+    public SJFNProcess(int pid, int burstTime, int arrivalTime) {
+        this.pid = pid;
+        this.burstTime = burstTime;
+        this.arrivalTime = arrivalTime;
+    }
+}
+
+public class SJFnon {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of processes: ");
+        int n = sc.nextInt();
+        SJFNProcess[] processes = new SJFNProcess[n];
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter arrival time and burst time for process " + (i + 1) + ": ");
+            int at = sc.nextInt();
+            int bt = sc.nextInt();
+            processes[i] = new SJFNProcess(i + 1, bt, at);
+        }
+        // Sort processes by arrival time and burst time
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (processes[j].burstTime > processes[j + 1].burstTime) {
+                    SJFNProcess temp = processes[j];
+                    processes[j] = processes[j + 1];
+                    processes[j + 1] = temp;
+                }
+            }
+        }
+        int totalTime = 0, totalWT = 0, totalTAT = 0;
+        for (SJFNProcess p : processes) {
+            p.waitingTime = totalTime - p.arrivalTime;
+            totalTime += p.burstTime;
+            p.turnaroundTime = p.waitingTime + p.burstTime;
+            totalWT += p.waitingTime;
+            totalTAT += p.turnaroundTime;
+        }
+        // Print Gantt Chart
+        System.out.println("Gantt Chart: ");
+        for (SJFNProcess p : processes) {
+            System.out.print("P" + p.pid + " ");
+        }
+        System.out.println("\n");
+        // Print process details
+        System.out.println("Process\tArrival\tBurst\tWaiting\tTurnaround");
+        for (SJFNProcess p : processes) {
+            System.out.println("P" + p.pid + "\t" + p.arrivalTime + "\t" + p.burstTime + "\t" +
+                    p.waitingTime + "\t" + p.turnaroundTime);
+        }
+        System.out.println("Average Waiting Time: " + (totalWT / (float) n));
+        System.out.println("Average Turnaround Time: " + (totalTAT / (float) n));
+        sc.close();
+    }
+}
 
 
 
