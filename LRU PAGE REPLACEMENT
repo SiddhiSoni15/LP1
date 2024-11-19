@@ -1,0 +1,46 @@
+
+
+
+LRU PAGE REPLACEMENT
+
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class lru {
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        System.out.print("enter number of frames:");
+        int numofframes= sc.nextInt();
+        System.out.print("enter number of pages:");
+        int numofpages= sc.nextInt();
+        System.out.print("enter page reference string:");
+        int[] pagereferencestring =new int[numofpages];
+        for(int i=0;i<numofpages;i++){
+            pagereferencestring[i]=sc.nextInt();
+        }
+        
+        LinkedList<Integer> frames = new LinkedList<>();
+        int pagefaults=0;
+        for(int page:pagereferencestring){
+            if(!frames.contains(page)){
+                if(frames.size()>=numofframes){
+                    frames.removeFirst();
+                }
+                frames.addLast(page);
+                pagefaults++;
+            }
+            else{
+                frames.remove(frames.indexOf(page));
+                frames.addLast(page);
+            }
+            System.out.print("Frames: ");
+            for (int frame:frames){
+                System.out.print(frame+" ");
+            }
+            System.out.println();
+        }
+        System.out.println("total page faults:"+pagefaults);
+        sc.close();
+    } 
+}
+
